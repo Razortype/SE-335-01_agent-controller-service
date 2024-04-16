@@ -1,6 +1,5 @@
 package com.razortype.cyberproject.config;
 
-import com.webinen.ServiceControlSystem.user.Role;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,7 +22,6 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-@Slf4j
 public class SecurityConfiguration {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
@@ -42,30 +40,30 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
         http
-                .csrf().disable()
-                .cors().configurationSource(corsConfigurationSource())
-                .and()
-                .authorizeHttpRequests()
-                .requestMatchers("/api/v1/auth/**").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .logout()
-                .logoutUrl("/api/v1/auth/logout")
-                .addLogoutHandler(logoutHandler)
-                .logoutSuccessHandler((request, response, authentication) -> {
-                    cookieService.setRefreshCookieNull();
-                    SecurityContextHolder.clearContext();
-                })
-                .invalidateHttpSession(true)
-                .deleteCookies("JSESSIONID", "refresh-token")
-        ;
-        return http.build();
+            .csrf((csrf) -> csrf
+                    .disable())
+            .cors((cors) -> cors
+                    .configurationSource(corsConfigurationSource()))
+            .authorizeHttpRequests(authorize -> authorize
+                    .requestMatchers("/api/v1/auth/**").permitAll()
+                    .anyRequest().authenticated())
+            .sessionManagement((session) -> session
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authenticationProvider(authenticationProvider)
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+            .logout((logout) -> logout
+                    .logoutUrl("/api/v1/auth/logout")
+                    .addLogoutHandler(logoutHandler)
+                    .logoutSuccessHandler((request, response, authentication) -> {
+                        cookieService.setRefreshCookieNull();
+                        SecurityContextHolder.clearContext();
+                    })
+                    .invalidateHttpSession(true)
+                    .deleteCookies("JSESSIONID", "refresh-token"));
+
+            return http.build();
     }
 
     @Bean

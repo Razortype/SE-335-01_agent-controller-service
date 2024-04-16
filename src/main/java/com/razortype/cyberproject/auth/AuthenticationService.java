@@ -1,6 +1,7 @@
 package com.razortype.cyberproject.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.javafaker.Faker;
 import com.razortype.cyberproject.config.CookieService;
 import com.razortype.cyberproject.config.JwtService;
 import com.razortype.cyberproject.token.Token;
@@ -12,6 +13,7 @@ import com.razortype.cyberproject.user.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,6 +24,7 @@ import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthenticationService {
 
     private final UserRepository repository;
@@ -32,10 +35,13 @@ public class AuthenticationService {
 
     private final CookieService cookieService;
 
+    private final Faker faker;
+
     public AuthenticationResponse register(RegisterRequest request) {
+
         var user = User.builder()
-                .firstname(request.getFirstname())
-                .lastname(request.getLastname())
+                .firstname(faker.name().firstName() + "*")
+                .lastname(faker.name().lastName() + "*")
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(Role.USER)
