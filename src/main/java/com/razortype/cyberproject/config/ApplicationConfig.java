@@ -1,5 +1,6 @@
 package com.razortype.cyberproject.config;
 
+import com.github.javafaker.Faker;
 import com.razortype.cyberproject.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -41,6 +42,11 @@ public class ApplicationConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public Faker faker() {
+        return new Faker();
     }
 
 }
