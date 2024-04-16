@@ -1,0 +1,46 @@
+
+spring:
+
+  application:
+    name: cyberproject
+
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/agentapp}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:123456}
+    driver-class-name: org.postgresql.Driver
+
+    jpa:
+      hibernate:
+        ddl-auto: ${DB_DLL:update}
+      show-sql: false
+      properties:
+        hibernate:
+          jdbc:
+            time_zone: UTC+3
+          format_sql: true
+      database: postgresql
+      database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+    jackson:
+      property-naming-strategy: SNAKE_CASE
+      time-zone: Europe/Istanbul
+
+application:
+  security:
+    jwt:
+      secret-key: ${AUTH_SECRET:97b525fd8e62899de05e10416f280b0bbd70beaa368fe101373a01e60083b77b16675bf419b10f080c861eccfdfac2b00a67b21132256be8d89ba8e398c9c540}
+      expiration: ${AUTH_EXP_SEC:43200000} # def: half a day => 12 * 60 * 60 * 1000
+      refresh-token:
+        expiration: ${REFRESH_EXP_SEC:302400000} # def: 7 days
+
+  cors:
+    allowed-origins: >
+      http://localhost:3000
+    allowed-methods: >
+      GET,
+      POST,
+      PUT,
+      DELETE
+    allowed-headers: >
+      *
