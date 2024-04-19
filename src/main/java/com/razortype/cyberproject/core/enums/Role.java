@@ -1,4 +1,4 @@
-package com.razortype.cyberproject.user;
+package com.razortype.cyberproject.core.enums;
 
 public enum Role {
     USER,

@@ -1,13 +1,15 @@
 package com.razortype.cyberproject.config;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -39,11 +41,25 @@ public class SecurityConfiguration {
     private List<String> allowedHeaders;
 
     @Bean
+    @Order(1)
+    @Profile("dev")
+    public SecurityFilterChain swaggerFilterChain(HttpSecurity http) throws Exception {
+        return http
+            .securityMatcher("/v3/**", "/bus/v3/**")
+            .authorizeHttpRequests((authorize) -> authorize
+                    .requestMatchers("/v3/api-docs/**").permitAll()
+                    .requestMatchers("/v3/swagger-ui/**").permitAll()
+                    .requestMatchers("/bus/v3/api-docs/**").permitAll())
+            .build();
+    }
+
+    @Bean
+    @Order(2)
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-            .csrf((csrf) -> csrf
-                    .disable())
+            .securityMatcher("/api/v1/**")
+            .csrf(AbstractHttpConfigurer::disable)
             .cors((cors) -> cors
                     .configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(authorize -> authorize
@@ -69,12 +85,12 @@ public class SecurityConfiguration {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(allowedOrigins); // allow all origins
-        configuration.setAllowedMethods(allowedMethods); // allow specific HTTP methods
-        configuration.setAllowedHeaders(allowedHeaders); // allow all headers
-        configuration.setAllowCredentials(true); // allow credentials such as cookies, authorization headers
+        configuration.setAllowedOrigins(allowedOrigins);
+        configuration.setAllowedMethods(allowedMethods);
+        configuration.setAllowedHeaders(allowedHeaders);
+        configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration); // apply CORS configuration to all endpoints
+        source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 

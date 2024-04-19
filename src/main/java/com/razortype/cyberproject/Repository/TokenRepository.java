@@ -1,5 +1,6 @@
-package com.razortype.cyberproject.token;
+package com.razortype.cyberproject.Repository;
 
+import com.razortype.cyberproject.entity.Token;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
