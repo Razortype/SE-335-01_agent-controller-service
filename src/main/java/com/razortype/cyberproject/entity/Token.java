@@ -1,6 +1,6 @@
-package com.razortype.cyberproject.token;
+package com.razortype.cyberproject.entity;
 
-import com.razortype.cyberproject.user.User;
+import com.razortype.cyberproject.core.enums.TokenType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

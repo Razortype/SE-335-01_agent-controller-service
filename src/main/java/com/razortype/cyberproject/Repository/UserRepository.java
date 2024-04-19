@@ -1,5 +1,7 @@
-package com.razortype.cyberproject.user;
+package com.razortype.cyberproject.Repository;
 
+import com.razortype.cyberproject.core.enums.Role;
+import com.razortype.cyberproject.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

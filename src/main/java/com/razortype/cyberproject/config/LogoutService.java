@@ -1,6 +1,6 @@
 package com.razortype.cyberproject.config;
 
-import com.razortype.cyberproject.token.TokenRepository;
+import com.razortype.cyberproject.Repository.TokenRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
