@@ -29,8 +29,8 @@ public class LogBlock {
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
-    @Column(name = "accept_log")
-    private boolean acceptLog;
+    @Column(name = "accepting_log")
+    private boolean acceptingLog;
 
     @Column(name = "warn_count")
     private int warnCount;

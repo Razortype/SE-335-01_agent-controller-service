@@ -1,5 +1,6 @@
 package com.razortype.cyberproject.api.controller;
 
+import com.razortype.cyberproject.api.dto.UpdateAttackRequest;
 import com.razortype.cyberproject.core.results.DataResult;
 import com.razortype.cyberproject.entity.AttackJob;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,15 +20,15 @@ public class AttackJobController {
     public ResponseEntity<DataResult<List<AttackJob>>> getAllAttackJobs() {return null;}
 
     @GetMapping("{attack-id}")
-    @Operation(summary = "Test", description = "Test")
+    @Operation(summary = "Get Attack by Id", description = "Getting attack job content by its id parameter")
     public ResponseEntity<DataResult<AttackJob>> getAttackById(@PathVariable("attack-id") UUID id) {return null;}
 
     @PutMapping("{attack-id}")
-    @Operation(summary = "Test", description = "Test")
-    public ResponseEntity<DataResult<AttackJob>> updateAttackById(@PathVariable("attack-id") UUID id) {return null;}
+    @Operation(summary = "Update Attack by Id", description = "Updating attack job content by its id parameter")
+    public ResponseEntity<DataResult<AttackJob>> updateAttackById(@PathVariable("attack-id") UUID id, @RequestBody UpdateAttackRequest request) {return null;}
 
     @DeleteMapping("{attack-id}")
-    @Operation(summary = "Test", description = "Test")
+    @Operation(summary = "Delete Attack By Id", description = "Deleting attack job by its id parameter")
     public ResponseEntity<DataResult<AttackJob>> deleteAttackById(@PathVariable("attack-id") UUID id) {return null;}
 
 }
