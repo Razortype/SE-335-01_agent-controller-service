@@ -1,5 +1,6 @@
 package com.razortype.cyberproject.config;
 
+import com.razortype.cyberproject.core.enums.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -64,6 +65,10 @@ public class SecurityConfiguration {
                     .configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(authorize -> authorize
                     .requestMatchers("/api/v1/auth/**").permitAll()
+                    .requestMatchers("/api/v1/server/state").permitAll()
+                    .requestMatchers("/api/v1/server/**").hasAnyAuthority(Role.USER.name())
+
+                    .requestMatchers("/manager/**").hasAnyAuthority(Role.MANAGER.name(), Role.ADMIN.name())
                     .anyRequest().authenticated())
             .sessionManagement((session) -> session
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
