@@ -20,5 +20,6 @@ public interface AgentService {
     void removeManager(WebSocketSession session);
     Map<WebSocketSession, User> getConnectedManagers();
     List<AgentInfoResponse> getConnectedAgentInfos();
+    void BroadcastAgentInfo();
 
 }

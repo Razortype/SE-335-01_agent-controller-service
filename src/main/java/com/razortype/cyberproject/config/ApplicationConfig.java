@@ -51,14 +51,4 @@ public class ApplicationConfig {
         return new Faker();
     }
 
-    @Bean
-    public MessageChannel myAgentMessageChannel() {
-        return new AgentMessageChannel();
-    }
-
-    @Bean
-    public SimpMessagingTemplate messagingTemplate(MessageChannel myAgentMessageChannel) {
-        return new SimpMessagingTemplate(myAgentMessageChannel);
-    }
-
 }

@@ -73,5 +73,10 @@ public class AgentServiceImpl implements AgentService {
 
     }
 
+    @Override
+    public void BroadcastAgentInfo() {
+        // broadcast logic
+    }
+
 
 }

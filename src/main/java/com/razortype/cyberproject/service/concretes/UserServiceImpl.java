@@ -6,11 +6,13 @@ import com.razortype.cyberproject.core.results.ErrorDataResult;
 import com.razortype.cyberproject.core.results.SuccessDataResult;
 import com.razortype.cyberproject.entity.User;
 import com.razortype.cyberproject.service.abstracts.UserService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepo;
