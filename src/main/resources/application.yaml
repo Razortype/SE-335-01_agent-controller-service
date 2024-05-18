@@ -43,3 +43,10 @@ springdoc:
     path: /v3/api-docs
   api-docs:
     enabled: false
+
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          socket=DEBUG:

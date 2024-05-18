@@ -70,6 +70,8 @@ public class SecurityConfiguration {
 
                     .requestMatchers("/connect-agent").hasAnyAuthority(Role.AGENT.name())
                     .requestMatchers("/live-agent").hasAnyAuthority(Role.MANAGER.name(), Role.ADMIN.name())
+
+                    .requestMatchers("/api/v1/test/**").permitAll()
                     .anyRequest().authenticated())
             .sessionManagement((session) -> session
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS))

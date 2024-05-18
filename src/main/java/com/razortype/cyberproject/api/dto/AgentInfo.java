@@ -28,5 +28,4 @@ public class AgentInfo {
     @JsonProperty("execution_history")
     private List<AttackExecutionPackage> executionHistory;
 
-
 }

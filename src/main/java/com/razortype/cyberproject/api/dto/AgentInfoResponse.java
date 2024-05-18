@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.socket.WebSocketSession;
 
 import java.util.Date;
 import java.util.List;
@@ -35,6 +34,7 @@ public class AgentInfoResponse {
     @JsonProperty("execution_history")
     private List<AttackExecutionPackageResponse> executionHistory;
 
-    private WebSocketSession session;
+    @JsonProperty("session_id")
+    private String sessionId;
 
 }
