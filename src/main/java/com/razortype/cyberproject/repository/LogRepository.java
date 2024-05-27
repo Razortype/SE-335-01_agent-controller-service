@@ -1,4 +1,4 @@
-package com.razortype.cyberproject.Repository;
+package com.razortype.cyberproject.repository;
 
 import com.razortype.cyberproject.entity.Log;
 import com.razortype.cyberproject.entity.LogBlock;

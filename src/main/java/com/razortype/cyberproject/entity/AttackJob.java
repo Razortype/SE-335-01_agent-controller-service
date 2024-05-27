@@ -44,9 +44,14 @@ public class AttackJob {
     @Column(name = "is_crashed")
     private boolean crashed;
 
-    @Column(name = "executedAt")
-    @CreationTimestamp
-    private LocalDateTime executedAt;
+    @Column(name = "is_started")
+    private boolean started;
+
+    @Column(name = "executed_at")
+    private LocalDateTime executeAt;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -54,7 +59,7 @@ public class AttackJob {
 
     @JsonManagedReference
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "log_block_id", referencedColumnName = "id")
+    @JoinColumn(name = "log_block_id", referencedColumnName = "id", unique = true)
     private LogBlock logBlock;
 
 }

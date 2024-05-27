@@ -1,9 +1,9 @@
 package com.razortype.cyberproject.config;
 
 import com.razortype.cyberproject.core.results.Result;
-import com.razortype.cyberproject.core.utils.AgentUtil;
+import com.razortype.cyberproject.core.utils.SocketSessionUtil;
 import com.razortype.cyberproject.entity.User;
-import com.razortype.cyberproject.service.abstracts.AgentService;
+import com.razortype.cyberproject.service.abstracts.SocketSessionService;
 import com.razortype.cyberproject.service.abstracts.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,30 +18,30 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 public class AgentConnectionSocketHandler extends TextWebSocketHandler {
 
     private final UserService userService;
-    private final AgentService agentService;
-    private final AgentUtil agentUtil;
+    private final SocketSessionService socketSessionService;
+    private final SocketSessionUtil socketSessionUtil;
 
     private Logger logger = LoggerFactory.getLogger(AgentConnectionSocketHandler.class);
 
     @Autowired
     public AgentConnectionSocketHandler(UserService userService,
-                                        AgentService agentService,
-                                        AgentUtil agentUtil) {
+                                        SocketSessionService socketSessionService,
+                                        SocketSessionUtil socketSessionUtil) {
         this.userService = userService;
-        this.agentService = agentService;
-        this.agentUtil = agentUtil;
+        this.socketSessionService = socketSessionService;
+        this.socketSessionUtil = socketSessionUtil;
     }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 
-        User user = agentUtil.checkAndGetSessionAuth(session);
+        User user = socketSessionUtil.checkAndGetSessionAuth(session);
         if (user == null) {
             logger.error("Socket Authentication not found: " + session.getRemoteAddress());
             return;
         }
 
-        Result agentAddResult = agentService.addAgentSession(session, user);
+        Result agentAddResult = socketSessionService.addAgentSession(session, user);
         if (!agentAddResult.isSuccess()) {
             logger.warn("Socket: " + agentAddResult.getMessage());
             session.sendMessage(new TextMessage(agentAddResult.getMessage()));
@@ -50,18 +50,20 @@ public class AgentConnectionSocketHandler extends TextWebSocketHandler {
         }
 
         logger.info("Agent connected to /connect-agent : " + session.getRemoteAddress());
-        session.sendMessage(new TextMessage("#connected ~> NEED TO SEND INITIALISING CONFIG COMPONENT"));
     }
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         System.out.println("Received message on connect-agent ("+ session.getRemoteAddress() +"): " + message.getPayload());
+
+        socketSessionService.handleReceivedMessage(session, message);
+
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
 
-        Result agentRemoveResult = agentService.removeAgentSession(session);
+        Result agentRemoveResult = socketSessionService.removeAgentSession(session);
         if (!agentRemoveResult.isSuccess()) {
             logger.warn("Socket: " + agentRemoveResult.getMessage());
             return;

@@ -1,12 +1,10 @@
 package com.razortype.cyberproject.config;
 
-import com.razortype.cyberproject.core.results.DataResult;
 import com.razortype.cyberproject.core.results.Result;
-import com.razortype.cyberproject.core.utils.AgentUtil;
+import com.razortype.cyberproject.core.utils.SocketSessionUtil;
 import com.razortype.cyberproject.entity.User;
-import com.razortype.cyberproject.service.abstracts.AgentService;
+import com.razortype.cyberproject.service.abstracts.SocketSessionService;
 import com.razortype.cyberproject.service.abstracts.UserService;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,36 +14,34 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-import java.io.IOException;
-
 @Component
 public class LiveAgentInfoSocketHandler extends TextWebSocketHandler {
 
     private final UserService userService;
-    private final AgentService agentService;
-    private final AgentUtil agentUtil;
+    private final SocketSessionService socketSessionService;
+    private final SocketSessionUtil socketSessionUtil;
 
     private Logger logger = LoggerFactory.getLogger(LiveAgentInfoSocketHandler.class);
 
     @Autowired
     public LiveAgentInfoSocketHandler(UserService userService,
-                                      AgentService agentService,
-                                      AgentUtil agentUtil) {
+                                      SocketSessionService socketSessionService,
+                                      SocketSessionUtil socketSessionUtil) {
         this.userService = userService;
-        this.agentService = agentService;
-        this.agentUtil = agentUtil;
+        this.socketSessionService = socketSessionService;
+        this.socketSessionUtil = socketSessionUtil;
     }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 
-        User user = agentUtil.checkAndGetSessionAuth(session);
+        User user = socketSessionUtil.checkAndGetSessionAuth(session);
         if (user == null) {
             logger.error("Socket Authentication not found: " + session.getRemoteAddress());
             return;
         }
 
-        Result managerAddResult = agentService.addManager(session, user);
+        Result managerAddResult = socketSessionService.addManager(session, user);
         if (!managerAddResult.isSuccess()) {
             logger.warn("Socket: " + managerAddResult.getMessage());
             session.sendMessage(new TextMessage(managerAddResult.getMessage()));
@@ -66,7 +62,7 @@ public class LiveAgentInfoSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
 
-        Result managerRemoveResult = agentService.removeManager(session);
+        Result managerRemoveResult = socketSessionService.removeManager(session);
         if (!managerRemoveResult.isSuccess()) {
             logger.warn("Socket: " + managerRemoveResult.getMessage());
             return;

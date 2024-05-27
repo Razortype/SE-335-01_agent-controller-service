@@ -1,4 +1,4 @@
-package com.razortype.cyberproject.Repository;
+package com.razortype.cyberproject.repository;
 
 import com.razortype.cyberproject.entity.Token;
 import org.springframework.data.jpa.repository.JpaRepository;

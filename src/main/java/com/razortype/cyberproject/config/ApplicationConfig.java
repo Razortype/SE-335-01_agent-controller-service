@@ -1,12 +1,10 @@
 package com.razortype.cyberproject.config;
 
 import com.github.javafaker.Faker;
-import com.razortype.cyberproject.Repository.UserRepository;
+import com.razortype.cyberproject.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;

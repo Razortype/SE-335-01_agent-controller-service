@@ -6,5 +6,6 @@ import com.razortype.cyberproject.entity.User;
 public interface UserService {
 
     DataResult<User> getUserByEmail(String email);
+    DataResult<User> getUserById(int id);
 
 }

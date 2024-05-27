@@ -1,7 +1,8 @@
 package com.razortype.cyberproject.service.concretes;
 
-import com.razortype.cyberproject.Repository.LogBlockRepository;
-import com.razortype.cyberproject.Repository.LogRepository;
+import com.razortype.cyberproject.entity.AttackJob;
+import com.razortype.cyberproject.repository.LogBlockRepository;
+import com.razortype.cyberproject.repository.LogRepository;
 import com.razortype.cyberproject.api.controller.LogController;
 import com.razortype.cyberproject.api.dto.NewLogRequest;
 import com.razortype.cyberproject.api.dto.UpdateLogBlockRequest;
@@ -79,6 +80,17 @@ public class LogServiceImpl implements LogService {
         }
         logger.info("LogBlock found with ID: {}", id);
         return new SuccessDataResult<>(logBlock, "LogBlock found");
+    }
+
+    @Override
+    public DataResult<LogBlock> getLogBlockByAttackJob(AttackJob attackJob) {
+
+        LogBlock logBlock = logBlockRepo.findByAttackJob(attackJob).orElse(null);
+        if (logBlock == null) {
+            return new ErrorDataResult<>("LogBlock not found: AttackJob#" + attackJob.getId());
+        }
+        return new SuccessDataResult<>(logBlock, "LogBlock found");
+
     }
 
     @Override
@@ -166,6 +178,18 @@ public class LogServiceImpl implements LogService {
     }
 
     @Override
+    public Result delete(LogBlock logBlock) {
+
+        try {
+            logBlockRepo.delete(logBlock);
+        } catch (Exception e) {
+            return new ErrorResult("UEO: " + e.getMessage());
+        }
+        return new SuccessResult("LogBlock deleted");
+
+    }
+
+    @Override
     public DataResult<List<Log>> getAllLog() {
         logger.debug("Attempting to fetch all Logs");
         List<Log> logs = logRepo.findAll();
@@ -183,5 +207,17 @@ public class LogServiceImpl implements LogService {
         logger.debug("Log found with ID: {}", id);
         logger.info("Log found with ID: {}", id);
         return new SuccessDataResult<>("Log found");
+    }
+
+    @Override
+    public Result delete(Log log) {
+
+        try {
+            logRepo.delete(log);
+        } catch (Exception e) {
+            return new ErrorResult("UEO: " + e.getMessage());
+        }
+        return new SuccessResult("Log deleted");
+
     }
 }
