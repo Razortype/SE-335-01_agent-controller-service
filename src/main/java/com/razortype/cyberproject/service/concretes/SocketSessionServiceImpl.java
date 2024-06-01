@@ -7,6 +7,7 @@ import com.razortype.cyberproject.core.enums.Role;
 import com.razortype.cyberproject.core.messages.CustomMessage;
 import com.razortype.cyberproject.core.messages.payloads.AgentInformationPayload;
 import com.razortype.cyberproject.core.messages.payloads.AgentInitializationPayload;
+import com.razortype.cyberproject.core.messages.payloads.AttackConfirmationPayload;
 import com.razortype.cyberproject.core.messages.payloads.ManagerAgentInformationPayload;
 import com.razortype.cyberproject.core.objects.SessionInformation;
 import com.razortype.cyberproject.core.objects.dto.AgentSessionInformationResponse;
@@ -16,7 +17,9 @@ import com.razortype.cyberproject.core.results.Result;
 import com.razortype.cyberproject.core.results.SuccessResult;
 import com.razortype.cyberproject.core.utils.SocketSessionUtil;
 import com.razortype.cyberproject.core.utils.MessageUtil;
+import com.razortype.cyberproject.entity.AttackJob;
 import com.razortype.cyberproject.entity.User;
+import com.razortype.cyberproject.service.abstracts.AttackJobService;
 import com.razortype.cyberproject.service.abstracts.SocketSessionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,6 +35,7 @@ import java.util.*;
 public class SocketSessionServiceImpl implements SocketSessionService {
 
     private final SocketSessionUtil socketSessionUtil;
+    private final AttackJobService attackJobService;
     private final MessageUtil messageUtil;
 
     private final HashMap<WebSocketSession, SessionInformation> connectedSessionInformation = new HashMap<>();
@@ -88,12 +92,34 @@ public class SocketSessionServiceImpl implements SocketSessionService {
                 info.setAddress(session.getRemoteAddress().getHostName());
                 info.setAgentInitializationPayload((AgentInitializationPayload) customMessage.getPayload());
             }
+            case ATTACK_CONF_PACKAGE -> {
+
+                AttackConfirmationPayload payload = (AttackConfirmationPayload) customMessage.getPayload();
+
+                DataResult<AttackJob> attackJobDataResult = attackJobService
+                        .getAttackJobById(payload.getAttackJobId());
+                if (!attackJobDataResult.isSuccess()) {
+                    return new ErrorResult(attackJobDataResult.getMessage());
+                }
+
+                AttackJob attackJob = attackJobDataResult.getData();
+                attackJob.setActive(true);
+                attackJob.setStarted(true);
+                attackJob.setStartExecutingAt(payload.getStartExecutingAt());
+
+                Result saveResult = attackJobService.save(attackJob);
+                if (!saveResult.isSuccess()) {
+                    return saveResult;
+                }
+
+            }
+
             default -> System.out.println("Message not handled: " + message.getPayload());
+
         }
 
         broadcastAgentInfo();
-
-        return new ErrorResult("Currently System Not Handle Info Request");
+        return new SuccessResult("Message handled");
 
     }
 

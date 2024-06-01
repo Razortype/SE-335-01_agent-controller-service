@@ -2,6 +2,7 @@ package com.razortype.cyberproject.core.messages.payloads;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.razortype.cyberproject.core.enums.AttackStatus;
+import com.razortype.cyberproject.core.enums.AttackType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,6 +22,9 @@ public class AttackConfirmationPayload extends BasePayload {
 
     @JsonProperty("attack_status")
     private AttackStatus attackStatus;
+
+    @JsonProperty("attack_type")
+    private AttackType attackType;
 
     @JsonProperty("start_executing_at")
     private LocalDateTime startExecutingAt;

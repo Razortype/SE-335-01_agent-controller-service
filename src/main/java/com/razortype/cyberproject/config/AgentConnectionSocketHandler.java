@@ -54,9 +54,12 @@ public class AgentConnectionSocketHandler extends TextWebSocketHandler {
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        System.out.println("Received message on connect-agent ("+ session.getRemoteAddress() +"): " + message.getPayload());
 
-        socketSessionService.handleReceivedMessage(session, message);
+        Result result = socketSessionService.handleReceivedMessage(session, message);
+
+        if (!result.isSuccess()) {
+            logger.warn(result.getMessage());
+        }
 
     }
 

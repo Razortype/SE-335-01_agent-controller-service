@@ -51,7 +51,11 @@ public class AttackJob {
     private LocalDateTime executeAt;
 
     @Column(name = "created_at")
+    @CreationTimestamp
     private LocalDateTime createdAt;
+
+    @Column(name = "start_executed_at")
+    private LocalDateTime startExecutingAt;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

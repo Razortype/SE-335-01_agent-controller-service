@@ -158,10 +158,12 @@ public class MessageUtil {
                             .build();
                 }
                 case ATTACK_CONF_PACKAGE -> {
+
                     payload = AttackConfirmationPayload.builder()
                             .payloadId(payloadId)
                             .attackJobId(UUID.fromString(payloadNode.get("attack_job_id").asText()))
                             .attackStatus(AttackStatus.valueOf(payloadNode.get("attack_status").asText()))
+                            .attackType(AttackType.valueOf(payloadNode.get("attack_type").asText()))
                             .startExecutingAt(LocalDateTime.parse(payloadNode.get("start_executing_at").asText()))
                             .build();
                 }

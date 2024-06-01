@@ -1,9 +1,11 @@
 package com.razortype.cyberproject.service.concretes;
 
 import com.razortype.cyberproject.api.dto.AttackJobCreateRequest;
+import com.razortype.cyberproject.api.dto.AttackJobResponse;
 import com.razortype.cyberproject.api.dto.UpdateAttackRequest;
 import com.razortype.cyberproject.core.enums.Role;
 import com.razortype.cyberproject.core.results.*;
+import com.razortype.cyberproject.core.utils.AttackJobUtil;
 import com.razortype.cyberproject.entity.AttackJob;
 import com.razortype.cyberproject.entity.LogBlock;
 import com.razortype.cyberproject.entity.User;
@@ -25,6 +27,17 @@ public class AttackJobServiceImpl implements AttackJobService {
     private final AttackJobRepository attackJobRepo;
     private final UserService userService;
     private final LogService logService;
+
+    private final AttackJobUtil attackJobUtil;
+
+    @Override
+    public DataResult<List<AttackJobResponse>> getAllAttackJobs() {
+
+        List<AttackJob> attackJobs = attackJobRepo.findAll();
+        List<AttackJobResponse> responses = attackJobUtil.convertAttackJobResponses(attackJobs);
+        return new SuccessDataResult<>(responses, "AttackJobs fetched");
+
+    }
 
     @Override
     public Result create(AttackJobCreateRequest request) {
@@ -73,7 +86,20 @@ public class AttackJobServiceImpl implements AttackJobService {
         if (attackJob == null) {
             return new ErrorDataResult<>("AttackJob not found: " + id);
         }
-        return new SuccessDataResult<>(attackJob, "AttackJob found");
+        return new SuccessDataResult<>(attackJob, "Attack Job found");
+
+    }
+
+    @Override
+    public DataResult<AttackJobResponse> getAttackJobResponseById(UUID id) {
+
+        DataResult<AttackJob> attackJobResult = getAttackJobById(id);
+        if (!attackJobResult.isSuccess()) {
+            return new ErrorDataResult<>(attackJobResult.getMessage());
+        }
+
+        AttackJobResponse response = attackJobUtil.convertAttackJobResponse(attackJobResult.getData());
+        return new SuccessDataResult<>(response, attackJobResult.getMessage());
 
     }
 

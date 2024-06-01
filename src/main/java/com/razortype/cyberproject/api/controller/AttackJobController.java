@@ -1,6 +1,7 @@
 package com.razortype.cyberproject.api.controller;
 
 import com.razortype.cyberproject.api.dto.AttackJobCreateRequest;
+import com.razortype.cyberproject.api.dto.AttackJobResponse;
 import com.razortype.cyberproject.api.dto.UpdateAttackRequest;
 import com.razortype.cyberproject.core.results.DataResult;
 import com.razortype.cyberproject.core.results.Result;
@@ -24,7 +25,14 @@ public class AttackJobController {
     private final AttackJobService attackJobService;
 
     @GetMapping
-    public ResponseEntity<DataResult<List<AttackJob>>> getAllAttackJobs() {return null;}
+    public ResponseEntity<DataResult<List<AttackJobResponse>>> getAllAttackJobs() {
+
+        DataResult<List<AttackJobResponse>> result = attackJobService.getAllAttackJobs();
+        result.determineHttpStatus();
+        return ResponseEntity.status(result.getHttpStatus())
+                .body(result);
+
+    }
 
     @PostMapping
     @Operation(summary = "Create Attack Job for Schedule", description = "Create attack job for schedule to executed when \"execute_at\" date comes")
@@ -39,9 +47,9 @@ public class AttackJobController {
 
     @GetMapping("/{attack-id}")
     @Operation(summary = "Get Attack by Id", description = "Getting attack job content by its id parameter")
-    public ResponseEntity<DataResult<AttackJob>> getAttackById(@PathVariable("attack-id") UUID id) {
+    public ResponseEntity<DataResult<AttackJobResponse>> getAttackById(@PathVariable("attack-id") UUID id) {
 
-        DataResult<AttackJob> result = attackJobService.getAttackJobById(id);
+        DataResult<AttackJobResponse> result = attackJobService.getAttackJobResponseById(id);
         result.determineHttpStatus();
         return ResponseEntity.status(result.getHttpStatus())
                 .body(result);

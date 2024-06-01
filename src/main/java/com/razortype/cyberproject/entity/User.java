@@ -1,5 +1,6 @@
 package com.razortype.cyberproject.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.razortype.cyberproject.core.enums.Role;
@@ -44,7 +45,7 @@ public class User implements UserDetails {
     private Role role;
 
     @OneToMany(mappedBy = "agent", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JsonManagedReference
+    @JsonIgnore
     private List<AttackJob> attacks = new ArrayList<>();
 
     @Override

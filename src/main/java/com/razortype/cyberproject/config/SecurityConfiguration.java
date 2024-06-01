@@ -67,6 +67,8 @@ public class SecurityConfiguration {
                     .requestMatchers("/api/v1/auth/**").permitAll()
                     .requestMatchers("/api/v1/server/state").permitAll()
                     .requestMatchers("/api/v1/server/**").hasAnyAuthority(Role.USER.name())
+                    .requestMatchers("/api/v1/attack-job/**").hasAnyAuthority(Role.MANAGER.name(), Role.ADMIN.name())
+                    .requestMatchers("/api/v1/log/**").hasAnyAuthority(Role.AGENT.name(), Role.MANAGER.name(), Role.ADMIN.name())
 
                     .requestMatchers("/connect-agent").hasAnyAuthority(Role.AGENT.name())
                     .requestMatchers("/live-agent").hasAnyAuthority(Role.MANAGER.name(), Role.ADMIN.name())

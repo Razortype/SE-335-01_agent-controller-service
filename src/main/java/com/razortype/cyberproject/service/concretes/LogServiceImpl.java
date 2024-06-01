@@ -130,11 +130,6 @@ public class LogServiceImpl implements LogService {
             return new ErrorResult("User not found");
         }
 
-        if (!user.getRole().equals(Role.AGENT)) {
-            logger.warn("User role is not AGENT to push log");
-            return new ErrorResult("User should be AGENT provided: " + user.getRole());
-        }
-
         LogBlock logBlock = (LogBlock) logBlockResult.getData();
 
         if (!logBlock.isAcceptingLog()) {
@@ -142,7 +137,7 @@ public class LogServiceImpl implements LogService {
             return new ErrorResult("LogBlock not accepting log");
         }
 
-        if (!logBlock.getAttackJob().getAgent().equals(user)) {
+        if (logBlock.getAttackJob().getAgent().getId() != user.getId()) {
             logger.warn("LogBlock not matching with provided Agent: {} - {}", logBlockId, user.getEmail());
             return new ErrorResult("LogBlock not assigned to provided user: " + logBlockId + " - " + user.getEmail());
         }
@@ -151,11 +146,12 @@ public class LogServiceImpl implements LogService {
                 .logText(request.getLogText())
                 .logType(request.getLogType())
                 .logLevel(request.getLogLevel())
+                .logBlock(logBlock)
                 .build();
 
-        Result saveResult = save(log);
-        if (!saveResult.isSuccess()) {
-            return new ErrorResult(saveResult.getMessage());
+        Result saveLogResult = save(log);
+        if (!saveLogResult.isSuccess()) {
+            return saveLogResult;
         }
 
         return new SuccessResult("logged to: " + logBlockId);

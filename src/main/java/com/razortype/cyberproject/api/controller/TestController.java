@@ -53,8 +53,9 @@ public class TestController {
         session.sendMessage(new TextMessage(messageUtil.customMessageToJson(messageUtil.createAttackMessage(
                         "Test Controller Message",
                         AttackPayload.builder()
-                                .attackJobId(UUID.randomUUID())
-                                .logBlockId(UUID.randomUUID())
+                                .payloadId(UUID.randomUUID())
+                                .attackJobId(UUID.fromString("3b30295c-7814-4624-bfef-f748d6d3f251"))
+                                .logBlockId(UUID.fromString("9f6a3258-7868-4fd4-a236-b31dc3b30373"))
                                 .attackName("Custom Attack # 1 || TESTING!!.")
                                 .attackDescription("Attack Description :: EX'")
                                 .attackType(AttackType.COOKIE_DISCOVERY)
