@@ -1,5 +1,9 @@
 package com.razortype.cyberproject.service.concretes;
 
+import com.razortype.cyberproject.api.dto.LogBlockResponse;
+import com.razortype.cyberproject.api.dto.LogResponse;
+import com.razortype.cyberproject.core.utils.LogBlockUtil;
+import com.razortype.cyberproject.core.utils.LogUtil;
 import com.razortype.cyberproject.entity.AttackJob;
 import com.razortype.cyberproject.repository.LogBlockRepository;
 import com.razortype.cyberproject.repository.LogRepository;
@@ -17,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +36,8 @@ public class LogServiceImpl implements LogService {
     private final LogRepository logRepo;
 
     private final AuthUserUtil authUserUtil;
+    private final LogBlockUtil logBlockUtil;
+    private final LogUtil logUtil;
 
     Logger logger = LoggerFactory.getLogger(LogController.class);
 
@@ -70,6 +77,18 @@ public class LogServiceImpl implements LogService {
     }
 
     @Override
+    public DataResult<List<LogBlockResponse>> getAllLogBlockResponse() {
+        DataResult<List<LogBlock>> blockResult = getAllLogBlock();
+        if (!blockResult.isSuccess()) {
+            return new ErrorDataResult<>(blockResult.getMessage());
+        }
+
+        List<LogBlockResponse> responses = logBlockUtil.mapToBlockResponses(blockResult.getData());
+        return new SuccessDataResult<>(responses, blockResult.getMessage());
+
+    }
+
+    @Override
     public DataResult<LogBlock> getLogBlockById(UUID id) {
         logger.debug("Attempting to retrieve LogBlock with ID: {}", id);
         LogBlock logBlock = logBlockRepo.findById(id).orElse(null);
@@ -80,6 +99,18 @@ public class LogServiceImpl implements LogService {
         }
         logger.info("LogBlock found with ID: {}", id);
         return new SuccessDataResult<>(logBlock, "LogBlock found");
+    }
+
+    @Override
+    public DataResult<LogBlockResponse> getLogBlockResponseById(UUID id) {
+        DataResult<LogBlock> blockResult = getLogBlockById(id);
+        if (!blockResult.isSuccess()) {
+            return new ErrorDataResult<>(blockResult.getMessage());
+        }
+
+        LogBlockResponse response = logBlockUtil.mapToBlockResponse(blockResult.getData());
+        return new SuccessDataResult<>(response, blockResult.getMessage());
+
     }
 
     @Override
@@ -158,7 +189,10 @@ public class LogServiceImpl implements LogService {
     }
 
     @Override
-    public DataResult<Page<Log>> getLogByLogBlock(UUID logBlockId, Pageable pageable) {
+    public DataResult<Page<Log>> getLogByLogBlock(UUID logBlockId, int page, int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
         logger.debug("Attempting to retrieve Logs by LogBlock with ID: {}", logBlockId);
         DataResult result = getLogBlockById(logBlockId);
         if (!result.isSuccess()) {
@@ -171,6 +205,18 @@ public class LogServiceImpl implements LogService {
         logger.info("Logs paged: " + pageable);
         return new SuccessDataResult<>(logs, "Logs paged: " + pageable);
 
+    }
+
+    @Override
+    public DataResult<List<LogResponse>> getLogResponseByLogBlock(UUID logBlockId, int page, int size) {
+
+        DataResult<Page<Log>> logResult = getLogByLogBlock(logBlockId, page, size);
+        if (!logResult.isSuccess()) {
+            return new ErrorDataResult<>(logResult.getMessage());
+        }
+        List<LogResponse> responses = logUtil.mapToLogResponses(logResult.getData().toList());
+
+        return new SuccessDataResult<>(responses, logResult.getMessage());
     }
 
     @Override
@@ -194,6 +240,15 @@ public class LogServiceImpl implements LogService {
     }
 
     @Override
+    public DataResult<List<LogResponse>> getAllLogResponse() {
+
+        DataResult<List<Log>> logResult = getAllLog();
+        List<LogResponse> responses = logUtil.mapToLogResponses(logResult.getData());
+        return new SuccessDataResult<>(responses, logResult.getMessage());
+
+    }
+
+    @Override
     public DataResult<Log> getLogById(UUID id) {
         logger.debug("Attempting to retrieve Log with ID: {}", id);
         Log log = logRepo.findById(id).orElse(null);
@@ -203,6 +258,18 @@ public class LogServiceImpl implements LogService {
         logger.debug("Log found with ID: {}", id);
         logger.info("Log found with ID: {}", id);
         return new SuccessDataResult<>("Log found");
+    }
+
+    @Override
+    public DataResult<LogResponse> getLogResponseById(UUID id) {
+
+        DataResult<Log> logResult = getLogById(id);
+        if (!logResult.isSuccess()) {
+            return new ErrorDataResult<>(logResult.getMessage());
+        }
+        LogResponse response = logUtil.mapToLogResponse(logResult.getData());
+        return new SuccessDataResult<>(response, logResult.getMessage());
+
     }
 
     @Override

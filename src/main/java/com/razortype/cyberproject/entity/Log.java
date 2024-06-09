@@ -29,7 +29,7 @@ public class Log {
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
-    @Column(name = "log_text")
+    @Column(name = "log_text", length = 1024)
     private String logText;
 
     @Column(name = "log_type")

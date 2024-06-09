@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,11 +31,13 @@ public class AttackJobServiceImpl implements AttackJobService {
 
     private final AttackJobUtil attackJobUtil;
 
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+
     @Override
     public DataResult<List<AttackJobResponse>> getAllAttackJobs() {
 
         List<AttackJob> attackJobs = attackJobRepo.findAll();
-        List<AttackJobResponse> responses = attackJobUtil.convertAttackJobResponses(attackJobs);
+        List<AttackJobResponse> responses = attackJobUtil.mapAttackJobResponses(attackJobs);
         return new SuccessDataResult<>(responses, "AttackJobs fetched");
 
     }
@@ -98,7 +101,7 @@ public class AttackJobServiceImpl implements AttackJobService {
             return new ErrorDataResult<>(attackJobResult.getMessage());
         }
 
-        AttackJobResponse response = attackJobUtil.convertAttackJobResponse(attackJobResult.getData());
+        AttackJobResponse response = attackJobUtil.mapAttackJobResponse(attackJobResult.getData());
         return new SuccessDataResult<>(response, attackJobResult.getMessage());
 
     }
@@ -153,8 +156,10 @@ public class AttackJobServiceImpl implements AttackJobService {
 
     @Override
     public DataResult<List<AttackJob>> getAllAttackJobNotExecutedQueue() {
+
         LocalDateTime now = LocalDateTime.now();
-        List<AttackJob> attackJobs = attackJobRepo.findAllByExecuteAtIsNullOrExecuteAtBeforeAndStartedFalse(now);
+        List<AttackJob> attackJobs = attackJobRepo.getAttackQueue(now);
         return new SuccessDataResult<>(attackJobs, "All not executed AttackJobs listed");
+
     }
 }

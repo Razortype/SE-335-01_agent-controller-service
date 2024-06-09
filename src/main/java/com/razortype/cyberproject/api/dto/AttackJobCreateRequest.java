@@ -2,11 +2,17 @@ package com.razortype.cyberproject.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.razortype.cyberproject.core.enums.AttackType;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class AttackJobCreateRequest {
 
     @JsonProperty("attack_name")
@@ -21,7 +27,7 @@ public class AttackJobCreateRequest {
     @JsonProperty("execute_at")
     private LocalDateTime executeAt;
 
-    @JsonProperty("agentId")
+    @JsonProperty("agent_id")
     private int agentId;
 
 }

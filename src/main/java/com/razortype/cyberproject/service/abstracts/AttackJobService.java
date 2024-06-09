@@ -6,6 +6,7 @@ import com.razortype.cyberproject.api.dto.UpdateAttackRequest;
 import com.razortype.cyberproject.core.results.DataResult;
 import com.razortype.cyberproject.core.results.Result;
 import com.razortype.cyberproject.entity.AttackJob;
+import com.razortype.cyberproject.entity.User;
 
 import java.util.List;
 import java.util.UUID;

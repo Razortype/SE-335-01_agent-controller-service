@@ -50,8 +50,11 @@ public class LiveAgentInfoSocketHandler extends TextWebSocketHandler {
         }
 
         logger.info("MANAGER/ADMIN connected to /live-agent : " + session.getRemoteAddress());
-        session.sendMessage(new TextMessage("#connected ~> NEED TO SEND INITIAL CONNECTED AGENT INFO"));
 
+        String message = socketSessionService.getLastSendBroadcastInformation();
+        if (message != null) {
+            session.sendMessage(new TextMessage(message));
+        }
     }
 
     @Override

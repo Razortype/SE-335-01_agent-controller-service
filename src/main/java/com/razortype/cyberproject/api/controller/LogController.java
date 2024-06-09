@@ -1,5 +1,7 @@
 package com.razortype.cyberproject.api.controller;
 
+import com.razortype.cyberproject.api.dto.LogBlockResponse;
+import com.razortype.cyberproject.api.dto.LogResponse;
 import com.razortype.cyberproject.api.dto.NewLogRequest;
 import com.razortype.cyberproject.api.dto.UpdateLogBlockRequest;
 import com.razortype.cyberproject.core.results.DataResult;
@@ -35,9 +37,9 @@ public class LogController {
 
     @GetMapping("/block")
     @Operation(summary = "Get All Log Blocks", description = "Retrieve a list of all log blocks.")
-    public ResponseEntity<DataResult<List<LogBlock>>> getAllLogBlocks() {
+    public ResponseEntity<DataResult<List<LogBlockResponse>>> getAllLogBlocks() {
         logger.info("Request received to retrieve all log blocks");
-        DataResult<List<LogBlock>> result = logService.getAllLogBlock();
+        DataResult<List<LogBlockResponse>> result = logService.getAllLogBlockResponse();
 
         result.determineHttpStatus();
         return ResponseEntity.status(result.getHttpStatus())
@@ -46,9 +48,9 @@ public class LogController {
 
     @GetMapping("/block/{block-id}")
     @Operation(summary = "Get Log Block by ID", description = "Retrieve a log block by its unique ID.")
-    public ResponseEntity<DataResult<LogBlock>> getLogBlockById(@PathVariable(name = "block-id") UUID id) {
+    public ResponseEntity<DataResult<LogBlockResponse>> getLogBlockById(@PathVariable(name = "block-id") UUID id) {
         logger.info("Request received to retrieve log block by ID: {}", id);
-        DataResult<LogBlock> result = logService.getLogBlockById(id);
+        DataResult<LogBlockResponse> result = logService.getLogBlockResponseById(id);
 
         result.determineHttpStatus();
         return ResponseEntity.status(result.getHttpStatus())
@@ -81,13 +83,13 @@ public class LogController {
 
     @GetMapping("/block/{block-id}/log")
     @Operation(summary = "Get logs by log block", description = "Retrieve logs belonging to a specific log block with pagination.")
-    public ResponseEntity<DataResult<Page<Log>>> getLogByLogBlock(
+    public ResponseEntity<DataResult<List<LogResponse>>> getLogByLogBlock(
             @PathVariable(name = "block-id") UUID logBlockId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
+            @RequestParam int page,
+            @RequestParam int size) {
         logger.info("Request received to retrieve logs for log block with ID: {}", logBlockId);
-        Pageable pageable = PageRequest.of(page, size);
-        DataResult<Page<Log>> logsResult = logService.getLogByLogBlock(logBlockId, pageable);
+
+        DataResult<List<LogResponse>> logsResult = logService.getLogResponseByLogBlock(logBlockId, page, size);
 
         logsResult.determineHttpStatus();
         return ResponseEntity.status(logsResult.getHttpStatus())
@@ -98,9 +100,9 @@ public class LogController {
 
     @GetMapping
     @Operation(summary = "Get All Logs", description = "Retrieve a list of all logs.")
-    public ResponseEntity<DataResult<List<Log>>> getAllLog() {
+    public ResponseEntity<DataResult<List<LogResponse>>> getAllLog() {
         logger.info("Request received to retrieve all logs");
-        DataResult<List<Log>> result = logService.getAllLog();
+        DataResult<List<LogResponse>> result = logService.getAllLogResponse();
 
         result.determineHttpStatus();
         return ResponseEntity.status(result.getHttpStatus())
@@ -109,9 +111,9 @@ public class LogController {
 
     @GetMapping("/{log-id}")
     @Operation(summary = "Get Log by ID", description = "Retrieve a log by its unique ID.")
-    public ResponseEntity<DataResult<Log>> getLogById(@PathVariable(name = "log-id") UUID id) {
+    public ResponseEntity<DataResult<LogResponse>> getLogById(@PathVariable(name = "log-id") UUID id) {
         logger.info("Request received to retrieve log by ID: {}", id);
-        DataResult<Log> result = logService.getLogById(id);
+        DataResult<LogResponse> result = logService.getLogResponseById(id);
 
         result.determineHttpStatus();
         return ResponseEntity.status(result.getHttpStatus())

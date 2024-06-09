@@ -5,10 +5,7 @@ import com.razortype.cyberproject.core.enums.AgentStatus;
 import com.razortype.cyberproject.core.enums.MessageType;
 import com.razortype.cyberproject.core.enums.Role;
 import com.razortype.cyberproject.core.messages.CustomMessage;
-import com.razortype.cyberproject.core.messages.payloads.AgentInformationPayload;
-import com.razortype.cyberproject.core.messages.payloads.AgentInitializationPayload;
-import com.razortype.cyberproject.core.messages.payloads.AttackConfirmationPayload;
-import com.razortype.cyberproject.core.messages.payloads.ManagerAgentInformationPayload;
+import com.razortype.cyberproject.core.messages.payloads.*;
 import com.razortype.cyberproject.core.objects.SessionInformation;
 import com.razortype.cyberproject.core.objects.dto.AgentSessionInformationResponse;
 import com.razortype.cyberproject.core.results.DataResult;
@@ -34,11 +31,11 @@ import java.util.*;
 @RequiredArgsConstructor
 public class SocketSessionServiceImpl implements SocketSessionService {
 
-    private final SocketSessionUtil socketSessionUtil;
     private final AttackJobService attackJobService;
     private final MessageUtil messageUtil;
 
     private final HashMap<WebSocketSession, SessionInformation> connectedSessionInformation = new HashMap<>();
+    private CustomMessage<ManagerAgentInformationPayload> lastSendBroadcastInfo = new CustomMessage<>();
 
     public Result addAgentSession(WebSocketSession session, User user) {
 
@@ -182,6 +179,8 @@ public class SocketSessionServiceImpl implements SocketSessionService {
             return new ErrorResult("UEO: " + e.getMessage());
         }
 
+        lastSendBroadcastInfo = liveMessage;
+
         for (WebSocketSession session: managerSession) {
             try {
                 session.sendMessage(new TextMessage(message));
@@ -196,6 +195,67 @@ public class SocketSessionServiceImpl implements SocketSessionService {
 
     public HashMap<WebSocketSession, SessionInformation> getConnectedSessionInformation() {
         return connectedSessionInformation;
+    }
+
+    @Override
+    public String getLastSendBroadcastInformation() {
+        String message;
+        try {
+            message = messageUtil.customMessageToJson(this.lastSendBroadcastInfo);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return message;
+    }
+
+    @Override
+    public Result sendAttackRequest(WebSocketSession session, AttackPayload payload) {
+
+        try {
+            TextMessage message = new TextMessage(
+                    messageUtil.customMessageToJson(
+                            messageUtil.createAttackMessage("Attack Request: " + payload.getPayloadId(), payload)));
+            session.sendMessage(message);
+        } catch (IOException e) {
+            return new ErrorResult("UEO: " + e.getMessage());
+        }
+
+        return new SuccessResult("Attack request send to client");
+
+    }
+
+    @Override
+    public Result sendAttackToClient(AttackJob attackJob) {
+
+        User agent = attackJob.getAgent();
+        if (agent == null && agent.getRole() != Role.AGENT) {
+            return new ErrorResult("Agent is not valid");
+        }
+
+        Map.Entry<WebSocketSession, SessionInformation> information = getConnectedSessionInformation()
+                .entrySet().stream()
+                .filter(info -> info.getValue().getUser().getId() == agent.getId()
+                        && info.getValue().getUser().getRole() == Role.AGENT)
+                .findFirst()
+                .orElse(null);
+
+        if (information == null) {
+            return new ErrorResult("Agent not active");
+        }
+        WebSocketSession session = information.getKey();
+
+        AttackPayload payload = AttackPayload.builder()
+                .payloadId(UUID.randomUUID())
+                .attackJobId(attackJob.getId())
+                .logBlockId(attackJob.getLogBlock().getId())
+                .attackName(attackJob.getAttackName())
+                .attackDescription(attackJob.getAttackDescription())
+                .attackType(attackJob.getAttackType())
+                .executedAt(attackJob.getExecuteAt())
+                .build();
+
+        return sendAttackRequest(session, payload);
     }
 
     private boolean isSessionExists(WebSocketSession session) {

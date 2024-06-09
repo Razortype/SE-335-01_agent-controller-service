@@ -9,15 +9,15 @@ import java.util.List;
 @Service
 public class AttackJobUtil {
 
-    public List<AttackJobResponse> convertAttackJobResponses(List<AttackJob> jobs) {
+    public List<AttackJobResponse> mapAttackJobResponses(List<AttackJob> jobs) {
 
         return jobs.stream()
-                .map(this::convertAttackJobResponse)
+                .map(this::mapAttackJobResponse)
                 .toList();
 
     }
 
-    public AttackJobResponse convertAttackJobResponse(AttackJob job) {
+    public AttackJobResponse mapAttackJobResponse(AttackJob job) {
         return AttackJobResponse.builder()
                 .id(job.getId())
                 .attackName(job.getAttackName())

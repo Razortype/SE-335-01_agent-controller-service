@@ -1,5 +1,7 @@
 package com.razortype.cyberproject.service.abstracts;
 
+import com.razortype.cyberproject.api.dto.LogBlockResponse;
+import com.razortype.cyberproject.api.dto.LogResponse;
 import com.razortype.cyberproject.api.dto.NewLogRequest;
 import com.razortype.cyberproject.api.dto.UpdateLogBlockRequest;
 import com.razortype.cyberproject.core.results.DataResult;
@@ -18,15 +20,22 @@ public interface LogService {
     Result save(LogBlock logBlock);
     Result save(Log log);
     DataResult<List<LogBlock>> getAllLogBlock();
+    DataResult<List<LogBlockResponse>> getAllLogBlockResponse();
     DataResult<LogBlock> getLogBlockById(UUID id);
+    DataResult<LogBlockResponse> getLogBlockResponseById(UUID id);
     DataResult<LogBlock> getLogBlockByAttackJob(AttackJob attackJob);
     Result updateLogBlock(UUID id, UpdateLogBlockRequest request);
     Result saveNewLogToBlock(UUID logBlockId, NewLogRequest request);
-    DataResult<Page<Log>> getLogByLogBlock(UUID logBlockId, Pageable pageable);
+    DataResult<Page<Log>> getLogByLogBlock(UUID logBlockId, int page, int size);
+    DataResult<List<LogResponse>> getLogResponseByLogBlock(UUID logBlockId, int page, int size);
     Result delete(LogBlock logBlock);
 
     DataResult<List<Log>> getAllLog();
+    DataResult<List<LogResponse>> getAllLogResponse();
     DataResult<Log> getLogById(UUID id);
+    DataResult<LogResponse> getLogResponseById(UUID id);
     Result delete(Log log);
+
+
 
 }

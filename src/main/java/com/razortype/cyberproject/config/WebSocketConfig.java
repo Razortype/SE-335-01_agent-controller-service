@@ -29,6 +29,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
         registry.addHandler(agentConnectionSocketHandler, "/connect-agent")
                 .addInterceptors(authInterceptor);
         registry.addHandler(liveAgentInfoSocketHandler, "/live-agent")
+                .setAllowedOrigins("*")
                 .addInterceptors(authInterceptor);
 
     }
