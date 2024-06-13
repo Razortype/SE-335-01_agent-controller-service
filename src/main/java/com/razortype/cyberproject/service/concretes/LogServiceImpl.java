@@ -283,4 +283,13 @@ public class LogServiceImpl implements LogService {
         return new SuccessResult("Log deleted");
 
     }
+
+    @Override
+    public DataResult<Long> getLogPageAmountByLobBlockId(UUID blockId, int size) {
+
+        long totalProducts = logRepo.countByLogBlockId(blockId);
+        Long amount = (long) Math.ceil(totalProducts / (double) size);
+        return new SuccessDataResult<>(amount, String.format("Page amount calculated: %s per %s", amount, totalProducts));
+
+    }
 }

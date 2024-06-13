@@ -36,6 +36,8 @@ public interface LogService {
     DataResult<LogResponse> getLogResponseById(UUID id);
     Result delete(Log log);
 
+    DataResult<Long> getLogPageAmountByLobBlockId(UUID blockId, int size);
+
 
 
 }

@@ -2,6 +2,7 @@ package com.razortype.cyberproject.service.concretes;
 
 import com.razortype.cyberproject.api.dto.AttackJobCreateRequest;
 import com.razortype.cyberproject.api.dto.AttackJobResponse;
+import com.razortype.cyberproject.api.dto.DashboardAttackResponse;
 import com.razortype.cyberproject.api.dto.UpdateAttackRequest;
 import com.razortype.cyberproject.core.enums.Role;
 import com.razortype.cyberproject.core.results.*;
@@ -16,7 +17,9 @@ import com.razortype.cyberproject.service.abstracts.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
@@ -161,5 +164,24 @@ public class AttackJobServiceImpl implements AttackJobService {
         List<AttackJob> attackJobs = attackJobRepo.getAttackQueue(now);
         return new SuccessDataResult<>(attackJobs, "All not executed AttackJobs listed");
 
+    }
+
+    @Override
+    public DataResult<DashboardAttackResponse> getDashboardAttacks() {
+
+        LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
+        LocalDateTime endOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
+        List<AttackJob> todayAttacks = attackJobRepo.findAllByCreatedAtBetween(startOfDay, endOfDay);;
+
+        LocalDateTime startOfYesterday = LocalDate.now().minusDays(1).atStartOfDay();
+        LocalDateTime endOfYesterday = LocalDate.now().minusDays(1).atTime(LocalTime.MAX);
+        List<AttackJob> yesterdayAttacks = attackJobRepo.findAllByCreatedAtBetween(startOfYesterday, endOfYesterday);
+
+        DashboardAttackResponse response = DashboardAttackResponse.builder()
+                .todayAttacks(attackJobUtil.mapAttackJobResponses(todayAttacks))
+                .yesterdayAttacks(attackJobUtil.mapAttackJobResponses(yesterdayAttacks))
+                .build();
+
+        return new SuccessDataResult<>(response, "Dashboard Attacks fetched");
     }
 }

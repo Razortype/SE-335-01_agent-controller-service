@@ -16,4 +16,6 @@ public interface AttackJobRepository extends JpaRepository<AttackJob, UUID> {
     @Query("SELECT aj FROM AttackJob aj WHERE (aj.executeAt IS NULL OR aj.executeAt < :now) AND aj.started = FALSE")
     List<AttackJob> getAttackQueue(@Param("now") LocalDateTime now);
 
+    List<AttackJob> findAllByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
+
 }

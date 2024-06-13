@@ -96,6 +96,18 @@ public class LogController {
                 .body(logsResult);
     }
 
+    @GetMapping("/block/{block-id}/log/page-amount")
+    public ResponseEntity<DataResult<Long>> getLogByLogBlock(
+            @PathVariable(name = "block-id") UUID logBlockId,
+            @RequestParam int size) {
+
+        DataResult<Long> result = logService.getLogPageAmountByLobBlockId(logBlockId, size);
+        result.determineHttpStatus();
+        return ResponseEntity.status(result.getHttpStatus())
+                .body(result);
+
+    }
+
     // Log Controller
 
     @GetMapping

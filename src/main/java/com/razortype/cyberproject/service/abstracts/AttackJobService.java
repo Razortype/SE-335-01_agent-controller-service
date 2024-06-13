@@ -2,6 +2,7 @@ package com.razortype.cyberproject.service.abstracts;
 
 import com.razortype.cyberproject.api.dto.AttackJobCreateRequest;
 import com.razortype.cyberproject.api.dto.AttackJobResponse;
+import com.razortype.cyberproject.api.dto.DashboardAttackResponse;
 import com.razortype.cyberproject.api.dto.UpdateAttackRequest;
 import com.razortype.cyberproject.core.results.DataResult;
 import com.razortype.cyberproject.core.results.Result;
@@ -22,5 +23,6 @@ public interface AttackJobService {
     Result save(AttackJob attackJob);
 
     DataResult<List<AttackJob>> getAllAttackJobNotExecutedQueue();
+    DataResult<DashboardAttackResponse> getDashboardAttacks();
 
 }

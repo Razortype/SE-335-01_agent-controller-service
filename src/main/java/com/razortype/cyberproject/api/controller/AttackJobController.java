@@ -2,6 +2,7 @@ package com.razortype.cyberproject.api.controller;
 
 import com.razortype.cyberproject.api.dto.AttackJobCreateRequest;
 import com.razortype.cyberproject.api.dto.AttackJobResponse;
+import com.razortype.cyberproject.api.dto.DashboardAttackResponse;
 import com.razortype.cyberproject.api.dto.UpdateAttackRequest;
 import com.razortype.cyberproject.core.results.DataResult;
 import com.razortype.cyberproject.core.results.Result;
@@ -72,6 +73,16 @@ public class AttackJobController {
     public ResponseEntity<Result> deleteAttackById(@PathVariable("attack-id") UUID id) {
 
         Result result = attackJobService.deleteAttackJob(id);
+        result.determineHttpStatus();
+        return ResponseEntity.status(result.getHttpStatus())
+                .body(result);
+
+    }
+
+    @GetMapping("/dashboard")
+    public ResponseEntity<DataResult<DashboardAttackResponse>> getDashboardAttackResponse() {
+
+        DataResult result = attackJobService.getDashboardAttacks();
         result.determineHttpStatus();
         return ResponseEntity.status(result.getHttpStatus())
                 .body(result);
